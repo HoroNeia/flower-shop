@@ -10,24 +10,29 @@ jobs:
   build_and_test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: "npm"
 
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Run Build (Automatic Testing)
-        run: npm run build # If this fails, the deployment stops here!
+      - name: Run Lint Check (Automatic Testing)
+        run: npm run lint
+
+      - name: Run Build (Type Check & Bundle)
+        run: npm run build # This includes 'tsc -b', so it acts as your test!
 
       - name: Deploy to Firebase
         if: success()
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
-          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_FLOWER_SHOP_44943 }}"
           channelId: live
-          projectId: YOUR_PROJECT_ID_HERE # Replace this with your Firebase Project ID
+          projectId: flower-shop-44943
