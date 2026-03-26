@@ -1,23 +1,37 @@
 import React, { useState, useEffect } from "react";
 import { 
-  ShoppingBag, CheckCircle, Truck, X, MapPin, 
-  Calendar, AlertTriangle, Trash2, BellRing, Package, 
-  MessageSquare, MoreVertical, FileText, ExternalLink 
+  ShoppingBag, X, MapPin, 
+  Calendar, Trash2, BellRing, 
+  MessageSquare, MoreVertical, FileText 
 } from "lucide-react";
 import { 
   collection, updateDoc, deleteDoc, doc, query, orderBy, onSnapshot 
 } from "firebase/firestore"; 
 import { db } from "@/firebase";
 
+// Define specific shapes for better type safety
+interface CustomerInfo {
+  firstName: string;
+  lastName: string;
+  email: string;
+  streetAddress?: string;
+}
+
+interface OrderItem {
+  name: string;
+  quantity: number;
+  price: number;
+}
+
 interface Order {
   id: string;
-  customerInfo: any;
-  items?: any[];
+  customerInfo: CustomerInfo;
+  items?: OrderItem[];
   totalAmount?: number;
   status: string;
-  createdAt: any;
+  createdAt: { toDate: () => Date };
   type?: string; 
-  imageUrl?: string; // 🌟 Added for Bespoke Images
+  imageUrl?: string;
   customRequest?: {
     details: string;
     budget: string;
@@ -50,7 +64,7 @@ const AdminOrders = () => {
       const ordersData = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
-      })) as Order[];
+      })) as unknown as Order[];
       setOrders(ordersData);
       setPendingCount(ordersData.filter(o => o.status === "Pending" || o.status === "New").length);
       setLoading(false);
@@ -63,7 +77,7 @@ const AdminOrders = () => {
       setFilteredOrders(orders);
     } else {
       const now = new Date();
-      let startDate = new Date();
+      const startDate = new Date();
       if (filter === "last-day") startDate.setDate(now.getDate() - 1);
       else if (filter === "last-week") startDate.setDate(now.getDate() - 7);
       else if (filter === "last-month") startDate.setMonth(now.getMonth() - 1);
@@ -80,7 +94,7 @@ const AdminOrders = () => {
     try {
       await updateDoc(doc(db, "orders", orderId), { status: newStatus });
       triggerToast(`Status updated to ${newStatus}`, "info");
-    } catch (error) { 
+    } catch { 
       triggerToast("Update failed", "error");
     }
   };
@@ -90,7 +104,7 @@ const AdminOrders = () => {
       await deleteDoc(doc(db, "orders", orderId));
       setOrderToDelete(null);
       triggerToast("Entry deleted permanently", "error");
-    } catch (error) { 
+    } catch { 
       triggerToast("Delete failed", "error");
     }
   };
@@ -103,6 +117,8 @@ const AdminOrders = () => {
       default: return "bg-orange-50 text-orange-600 border-orange-100 animate-pulse";
     }
   };
+
+  if (loading) return <div className="p-10 text-[10px] font-black uppercase tracking-widest text-gray-400">Loading Datastream...</div>;
 
   return (
     <div className="animate-in fade-in duration-700 pb-10 font-sans relative px-2 md:px-0">
@@ -142,7 +158,6 @@ const AdminOrders = () => {
           </div>
         )}
 
-        {/* 💻 DESKTOP TABLE */}
         <div className="hidden lg:block overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -184,7 +199,6 @@ const AdminOrders = () => {
                       </span>
                     </td>
                     <td className="p-8 text-right">
-                      {/* 🌟 THREE DOTS BUTTON */}
                       <button onClick={() => setSelectedOrder(order)} className="p-3 text-gray-300 hover:text-pink-500 transition-all rounded-full hover:bg-white shadow-sm">
                         <MoreVertical size={20} />
                       </button>
@@ -196,7 +210,6 @@ const AdminOrders = () => {
           </table>
         </div>
 
-        {/* 📱 MOBILE VIEW */}
         <div className="lg:hidden flex flex-col divide-y divide-gray-100 p-4 pt-16">
           {filteredOrders.map((order) => {
             const isSub = order.type === "subscription";
@@ -226,7 +239,6 @@ const AdminOrders = () => {
         </div>
       </div>
 
-      {/* 🌟 DYNAMIC MANIFEST MODAL (Handles Cart vs Subscription + Images) */}
       {selectedOrder && (
         <div className="fixed inset-0 z-[600] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
           <div className="bg-white rounded-[2.5rem] md:rounded-[3rem] p-6 md:p-10 max-w-xl w-full shadow-2xl relative max-h-[90vh] overflow-y-auto border border-gray-100 custom-scrollbar">
@@ -237,7 +249,6 @@ const AdminOrders = () => {
             </h2>
             
             <div className="space-y-6">
-              {/* Destination Card */}
               <div className="flex items-start gap-4 p-5 bg-[#fcfcfc] rounded-[2rem] border border-gray-100">
                 <div className="bg-pink-500 p-3 rounded-2xl text-white shrink-0 shadow-lg shadow-pink-100"><MapPin size={20}/></div>
                 <div className="min-w-0">
@@ -249,7 +260,6 @@ const AdminOrders = () => {
                 </div>
               </div>
 
-              {/* 🌟 IMAGE PREVIEW LOGIC */}
               {selectedOrder.imageUrl && (
                 <div className="space-y-2">
                   <p className="font-black text-gray-400 text-[10px] uppercase tracking-[0.2em] ml-2">Visual Inspiration</p>
@@ -264,7 +274,6 @@ const AdminOrders = () => {
                 </div>
               )}
 
-              {/* Manifest Content */}
               <div className="p-6 border border-gray-100 rounded-[2.5rem]">
                  <p className="font-black text-gray-400 text-[10px] uppercase tracking-[0.2em] mb-5 border-b border-gray-50 pb-3">Manifest Content</p>
                  
@@ -285,7 +294,7 @@ const AdminOrders = () => {
                    </div>
                  ) : (
                    <div className="space-y-4">
-                      {(selectedOrder.items || []).map((item: any, i: number) => (
+                      {(selectedOrder.items || []).map((item, i) => (
                         <div key={i} className="flex justify-between items-center py-1">
                           <div className="flex flex-col">
                              <span className="font-bold text-gray-800 text-xs uppercase italic truncate">{item.name}</span>
@@ -302,7 +311,6 @@ const AdminOrders = () => {
                  )}
               </div>
 
-              {/* Status Actions */}
               <div className="grid grid-cols-2 gap-3 pt-2">
                  <button onClick={() => updateStatus(selectedOrder.id, "Shipped")} className="bg-blue-50 text-blue-500 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-blue-500 hover:text-white transition-all">Mark Shipped</button>
                  <button onClick={() => updateStatus(selectedOrder.id, "Completed")} className="bg-green-50 text-green-600 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-green-500 hover:text-white transition-all">Mark Complete</button>
@@ -313,7 +321,6 @@ const AdminOrders = () => {
         </div>
       )}
 
-      {/* DELETE MODAL */}
       {orderToDelete && (
         <div className="fixed inset-0 z-[700] flex items-center justify-center p-6 bg-black/70 backdrop-blur-md">
           <div className="bg-white rounded-[2.5rem] p-10 max-w-sm w-full text-center shadow-2xl relative border border-gray-100">

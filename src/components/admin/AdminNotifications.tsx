@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { 
   ShoppingBag, Trash2, Loader2, CheckCircle2, 
-  Clock, ExternalLink, MessageSquare, X, AlertTriangle 
+  Clock, ExternalLink, MessageSquare, AlertTriangle 
 } from "lucide-react";
 import { 
   collection, query, onSnapshot, orderBy, limit, Timestamp, deleteDoc, doc 
@@ -33,12 +33,12 @@ const AdminNotifications = () => {
   useEffect(() => {
     const q = query(collection(db, "orders"), orderBy("createdAt", "desc"), limit(20));
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const logs: Notification[] = snapshot.docs.map(doc => {
-        const data = doc.data();
+      const logs: Notification[] = snapshot.docs.map(docSnap => {
+        const data = docSnap.data();
         const isSub = data.type === "subscription" || data.type === "contact";
         
         return {
-          id: doc.id,
+          id: docSnap.id,
           type: isSub ? 'subscription' : 'order',
           title: isSub ? (data.type === "contact" ? "Contact Inquiry" : "Bespoke Request") : "New Purchase Received",
           message: isSub 
@@ -59,7 +59,7 @@ const AdminNotifications = () => {
       await deleteDoc(doc(db, "orders", confirmDeleteId));
       triggerToast("Record successfully purged from terminal.");
       setConfirmDeleteId(null);
-    } catch (error) {
+    } catch {
       triggerToast("Error: System failed to remove record.");
     }
   };
@@ -142,7 +142,6 @@ const AdminNotifications = () => {
                </Link>
             </div>
 
-            {/* Trash icon now triggers the modal instead of immediate delete */}
             <button 
               onClick={() => setConfirmDeleteId(notif.id)}
               className="p-2 text-gray-200 hover:text-red-500 transition-all absolute top-4 right-4 sm:relative sm:top-0 sm:right-0"
