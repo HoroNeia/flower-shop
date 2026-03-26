@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+
+  <url>
+    <loc>https://flower-shop-44943.web.app/</loc>
+    <image:image>
+      <image:loc>https://flower-shop-44943.web.app/image1.jpg</image:loc>
+      <image:title>Nesviera - Garden to Door</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://flower-shop-44943.web.app/shop</loc>
+    <image:image>
+      <image:loc>https://flower-shop-44943.web.app/example1.jpg</image:loc>
+      <image:title>Azure Rustic Bouquet</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://flower-shop-44943.web.app/example2.jpg</image:loc>
+      <image:title>Crimson Sunray Bouquet</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://flower-shop-44943.web.app/example3.jpg</image:loc>
+      <image:title>Purple Twilight Bouquet</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://flower-shop-44943.web.app/about</loc>
+    <image:image>
+      <image:loc>https://flower-shop-44943.web.app/logo.jpg</image:loc>
+      <image:title>Nesviera Logo</image:title>
+    </image:image>
+  </url>
+
+</urlset>
