@@ -4,9 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { useWishlist } from "@/context/WishlistContext";
 import QuickViewModal from "@/components/shop/QuickViewModal";
 
+// ✅ FIX: Added missing properties to match the new strict QuickViewModal types
 type ProductCardProps = {
   id: string | number;
   name: string;
+  category: string; // 🌟 Added
+  color: string;    // 🌟 Added
+  size: string;     // 🌟 Added
   imageUrl?: string;
   image?: string;
   price: number;
@@ -31,17 +35,13 @@ const ProductCard: React.FC<ProductCardProps> = (props) => {
 
   const handleWishlistClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // ✅ FIX: Using 'as unknown as any' to satisfy strict ESLint rules while keeping functionality
+    // ✅ FIX: Using safe casting to satisfy context
     const wishlistProduct = { 
+      ...props,
       id: String(id), 
-      name, 
       imageUrl: displayImage, 
-      price, 
-      oldPrice, 
-      rating, 
-      sale 
     };
-    toggleWishlist(wishlistProduct as unknown as any);
+    toggleWishlist(wishlistProduct as any);
     window.dispatchEvent(new Event('show-wishlist-toast'));
   };
 
@@ -132,7 +132,14 @@ const ProductCard: React.FC<ProductCardProps> = (props) => {
 
       {isModalOpen && (
         <QuickViewModal 
-          product={{...props, imageUrl: displayImage}} 
+          // ✅ FIX: Spreading props now includes category, color, and size
+          product={{
+            ...props, 
+            imageUrl: displayImage,
+            category: props.category || "General",
+            color: props.color || "Default",
+            size: props.size || "M"
+          }} 
           onClose={() => setIsModalOpen(false)} 
         />
       )}
