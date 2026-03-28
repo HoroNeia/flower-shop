@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { Send, CheckCircle2, Loader2, X, UploadCloud, FileText, Image as ImageIcon } from "lucide-react";
+import { Send, CheckCircle2, Loader2, X, UploadCloud, Image as ImageIcon } from "lucide-react"; // Removed FileText
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/firebase";
 
@@ -16,7 +16,7 @@ const SubscribeForm: React.FC = () => {
     budget: "",
   });
 
-  // 🌟 CLOUDINARY CONFIG (Matches your AdminProducts setup)
+  // 🌟 CLOUDINARY CONFIG
   const CLOUDINARY_UPLOAD_PRESET = "flowers_preset";
   const CLOUDINARY_CLOUD_NAME = "de92vq1qo";
 
@@ -39,7 +39,6 @@ const SubscribeForm: React.FC = () => {
     try {
       let finalImageUrl = "";
 
-      // 🌟 STEP 1: UPLOAD TO CLOUDINARY IF FILE EXISTS
       if (selectedFile) {
         const data = new FormData();
         data.append("file", selectedFile);
@@ -53,12 +52,11 @@ const SubscribeForm: React.FC = () => {
         finalImageUrl = fileData.secure_url;
       }
 
-      // 🌟 STEP 2: SAVE TO FIRESTORE
       await addDoc(collection(db, "orders"), {
         type: "subscription", 
         title: "Bespoke Customization",
-        message: customData.details, // Using message as backup
-        imageUrl: finalImageUrl,     // This is what the Admin Modal looks for!
+        message: customData.details,
+        imageUrl: finalImageUrl,
         customerInfo: {
           email: email,
           firstName: customData.name || "Client",
@@ -157,7 +155,6 @@ const SubscribeForm: React.FC = () => {
                 </div>
               </div>
 
-              {/* UPLOAD UI */}
               <div onClick={() => fileInputRef.current?.click()} className="p-8 bg-pink-50/20 rounded-[2.5rem] border-2 border-dashed border-pink-100 flex flex-col items-center justify-center gap-4 group cursor-pointer hover:bg-pink-50/40 transition-all">
                 <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
                 <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-pink-200 shadow-sm transition-all group-hover:scale-110">
