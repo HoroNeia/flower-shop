@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Youtube, ChevronUp } from "lucide-react";
+import { Facebook, Instagram, ChevronUp } from "lucide-react"; // Removed Youtube
 
 const Footer = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -67,11 +67,10 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* FOLLOW US - Social Links Added */}
+          {/* FOLLOW US */}
           <div className="flex flex-col items-center md:items-start">
             <h3 className="text-[10px] font-black mb-6 md:mb-10 uppercase tracking-[0.3em] text-gray-400">Follow Us</h3>
             <ul className="flex flex-row md:flex-col justify-center gap-6 text-gray-400">
-              {/* 🌟 Facebook Link */}
               <li>
                 <a 
                   href="https://www.facebook.com/nesvierasflowershop" 
@@ -86,7 +85,6 @@ const Footer = () => {
                 </a>
               </li>
 
-              {/* Instagram Placeholder */}
               <li>
                 <a href="#" className="flex items-center gap-3 group">
                   <div className="p-2 bg-white rounded-lg shadow-sm group-hover:bg-pink-500 group-hover:text-white transition-all">
