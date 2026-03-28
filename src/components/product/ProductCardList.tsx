@@ -1,5 +1,5 @@
 import React from "react";
-import { Heart, ShoppingCart, Star, Plus, Minus } from "lucide-react";
+import { Heart, ShoppingCart, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useWishlist } from "@/context/WishlistContext";
 import { useCart } from "@/context/CartContext";
