@@ -14,7 +14,8 @@ const ScrollToTop = () => {
         left: 0,
         behavior: "smooth", // Change to "instant" if you prefer no animation
       });
-    } catch (error) {
+    } catch {
+      // ✅ FIX: Removed (error) since it was never used.
       // Fallback for older browsers
       window.scrollTo(0, 0);
     }
