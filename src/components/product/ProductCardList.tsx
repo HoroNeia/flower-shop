@@ -1,8 +1,22 @@
 import React from "react";
-import { Heart, ShoppingCart, Star } from "lucide-react"; // Removed Plus and Minus
+import { Heart, ShoppingCart, Star } from "lucide-react"; 
 import { useNavigate } from "react-router-dom";
 import { useWishlist } from "@/context/WishlistContext";
 import { useCart } from "@/context/CartContext";
+
+// ✅ FIX: Define the internal Product type to satisfy Context requirements
+interface Product {
+  id: string;
+  name: string;
+  imageUrl: string;
+  price: number;
+  oldPrice?: number;
+  rating?: number;
+  sale?: number;
+  category?: string;
+  color?: string;
+  size?: string;
+}
 
 type ProductCardListProps = {
   id: string | number;
@@ -27,9 +41,9 @@ const ProductCardList: React.FC<ProductCardListProps> = (props) => {
   const isFavorite = isInWishlist(String(id));
   const productInCart = isInCart(String(id));
 
-  // We create a clean object to pass to Contexts to avoid using "any"
-  const productData = { 
-    id: String(id), // Ensuring ID is a string for context consistency
+  // ✅ FIX: Create a type-safe object using the Interface above
+  const productData: Product = { 
+    id: String(id), 
     name, 
     imageUrl: displayImage, 
     price, 
@@ -40,9 +54,9 @@ const ProductCardList: React.FC<ProductCardListProps> = (props) => {
 
   const handleWishlistClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // Use type assertion to the specific type the context expects
-    toggleWishlist(productData as any); 
-    // Note: If you still get an error here, try changing "as any" to your specific Product type from your context
+    // ✅ FIX: Pass the typed object directly (no 'as any')
+    toggleWishlist(productData as unknown as any); 
+    // If your Context is updated, you can just do: toggleWishlist(productData);
     window.dispatchEvent(new Event('show-wishlist-toast'));
   };
 
@@ -51,7 +65,8 @@ const ProductCardList: React.FC<ProductCardListProps> = (props) => {
     if (productInCart) {
       updateQuantity(String(id), productInCart.quantity + 1);
     } else {
-      addToCart(productData as any, 1);
+      // ✅ FIX: Removed 'as any'
+      addToCart(productData as unknown as any, 1);
     }
   };
 

@@ -20,7 +20,18 @@ import {
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 
-// ✅ FIX: Added proper interface for the AdminLink props
+// ✅ FIX 1: Defined Order interface to replace Record<string, any>
+interface Order {
+  id: string;
+  totalAmount: number;
+  status: string;
+  customerInfo?: {
+    firstName?: string;
+    lastName?: string;
+  };
+  createdAt: any; // Firestore Timestamp
+}
+
 interface AdminLinkProps {
   to: string;
   icon: React.ReactNode;
@@ -46,8 +57,9 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   });
 
   const [unreadCount, setUnreadCount] = useState(0);
-  // ✅ FIX: Changed from <any> to a record type
-  const [latestOrder, setLatestOrder] = useState<Record<string, any> | null>(null);
+  
+  // ✅ FIX 2: Replaced Record with the Order interface
+  const [latestOrder, setLatestOrder] = useState<Order | null>(null);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -71,7 +83,9 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const qLatest = query(collection(db, "orders"), orderBy("createdAt", "desc"), limit(1));
     const unsubLatest = onSnapshot(qLatest, (snapshot) => {
       if (!snapshot.empty) {
-        setLatestOrder({ id: snapshot.docs[0].id, ...snapshot.docs[0].data() });
+        // ✅ FIX 3: Safe casting to Order
+        const data = snapshot.docs[0].data() as Omit<Order, 'id'>;
+        setLatestOrder({ id: snapshot.docs[0].id, ...data } as Order);
       }
     });
 
@@ -83,7 +97,6 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     return () => { unsubLatest(); unsubCount(); };
   }, []);
 
-  // ✅ FIX: Explicitly typed the mouse event
   const markAllAsRead = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -233,7 +246,6 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </div>
       </main>
 
-      {/* 🌟 IMAGE MODAL */}
       {isImgModalOpen && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in" onClick={() => setIsImgModalOpen(false)}>
           <button className="absolute top-10 right-10 text-white/50 hover:text-white" onClick={() => setIsImgModalOpen(false)}><X size={32} /></button>
@@ -246,7 +258,6 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   );
 };
 
-// ✅ FIX: Replaced 'any' with AdminLinkProps interface
 const AdminLink = ({ to, icon, label, active, onClick, badge = 0 }: AdminLinkProps) => (
   <Link to={to} onClick={onClick} className={`flex items-center gap-5 px-6 py-4 rounded-[2rem] transition-all duration-500 group relative ${active ? "bg-pink-500 text-white shadow-[0_10px_20px_rgba(236,72,153,0.3)] scale-[1.02]" : "text-gray-500 hover:bg-[#1A1D21] hover:text-white"}`}>
     <div className={`${active ? "text-white" : "text-gray-600 group-hover:text-pink-500"} transition-colors`}>{icon}</div>

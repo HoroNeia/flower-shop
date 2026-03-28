@@ -1,20 +1,25 @@
 import * as React from "react"
-import { Direction } from "radix-ui"
+import * as DirectionPrimitive from "@radix-ui/react-direction"
+
+interface DirectionProviderProps {
+  dir?: "ltr" | "rtl"
+  direction?: "ltr" | "rtl"
+  children?: React.ReactNode
+}
 
 function DirectionProvider({
   dir,
   direction,
   children,
-}: React.ComponentProps<typeof Direction.DirectionProvider> & {
-  direction?: React.ComponentProps<typeof Direction.DirectionProvider>["dir"]
-}) {
+}: DirectionProviderProps) {
+  // ✅ FIX: Use a fallback and 'as any' to satisfy the strict Radix internal type
   return (
-    <Direction.DirectionProvider dir={direction ?? dir}>
+    <DirectionPrimitive.Provider dir={(direction ?? dir ?? "ltr") as any}>
       {children}
-    </Direction.DirectionProvider>
+    </DirectionPrimitive.Provider>
   )
 }
 
-const useDirection = Direction.useDirection
+const useDirection = DirectionPrimitive.useDirection
 
 export { DirectionProvider, useDirection }
