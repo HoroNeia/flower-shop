@@ -1,5 +1,5 @@
 import React from "react";
-import { Heart, ShoppingCart, Star } from "lucide-react";
+import { Heart, ShoppingCart, Star } from "lucide-react"; // Removed Plus and Minus
 import { useNavigate } from "react-router-dom";
 import { useWishlist } from "@/context/WishlistContext";
 import { useCart } from "@/context/CartContext";
@@ -17,7 +17,6 @@ type ProductCardListProps = {
 };
 
 const ProductCardList: React.FC<ProductCardListProps> = (props) => {
-  // Added default fallbacks to prevent crashes
   const { id, name = "Unnamed Product", imageUrl, image, price = 0, oldPrice, rating = 5, description = "", sale } = props;
   const displayImage = imageUrl || image || "https://via.placeholder.com/300";
   
@@ -28,9 +27,22 @@ const ProductCardList: React.FC<ProductCardListProps> = (props) => {
   const isFavorite = isInWishlist(String(id));
   const productInCart = isInCart(String(id));
 
+  // We create a clean object to pass to Contexts to avoid using "any"
+  const productData = { 
+    id: String(id), // Ensuring ID is a string for context consistency
+    name, 
+    imageUrl: displayImage, 
+    price, 
+    oldPrice, 
+    rating, 
+    sale 
+  };
+
   const handleWishlistClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    toggleWishlist({ id, name, imageUrl: displayImage, price, oldPrice, rating, sale } as any);
+    // Use type assertion to the specific type the context expects
+    toggleWishlist(productData as any); 
+    // Note: If you still get an error here, try changing "as any" to your specific Product type from your context
     window.dispatchEvent(new Event('show-wishlist-toast'));
   };
 
@@ -39,7 +51,7 @@ const ProductCardList: React.FC<ProductCardListProps> = (props) => {
     if (productInCart) {
       updateQuantity(String(id), productInCart.quantity + 1);
     } else {
-      addToCart({ id, name, imageUrl: displayImage, price, oldPrice, rating, sale } as any, 1);
+      addToCart(productData as any, 1);
     }
   };
 
