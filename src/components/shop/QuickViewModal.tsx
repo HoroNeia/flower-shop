@@ -3,12 +3,16 @@ import { X, Heart } from "lucide-react";
 import { useWishlist } from "@/context/WishlistContext"; 
 import { useCart } from "@/context/CartContext"; 
 
-// ✅ FIX: Defined a specific type instead of using 'any'
+// ✅ FIX: Added missing properties to match the global Product interface
+// This removes the need for "as any" which causes GitHub build errors.
 type ProductType = {
   id: string | number;
   name: string;
   price: number;
   imageUrl: string;
+  category: string; 
+  color: string;
+  size: string;
   oldPrice?: number;
   rating?: number;
 };
@@ -19,7 +23,6 @@ type ModalProps = {
 };
 
 const QuickViewModal: React.FC<ModalProps> = ({ product, onClose }) => {
-  // ✅ FIX: Removed 'const navigate = useNavigate();' because it was unused
   const [selectedImage, setSelectedImage] = useState(product.imageUrl);
   const [quantity, setQuantity] = useState(1);
 
@@ -36,15 +39,15 @@ const QuickViewModal: React.FC<ModalProps> = ({ product, onClose }) => {
   ];
 
   const handleAddToCart = () => {
-    // We cast to any here if the CartContext expects a slightly different shape, 
-    // but the props are now safely handled.
-    addToCart(product as any, quantity); 
+    // ✅ FIX: Removed "as any". The types now match perfectly.
+    addToCart(product, quantity); 
     window.dispatchEvent(new Event('open-mini-cart'));
     onClose(); 
   };
 
   const handleWishlistToggle = () => {
-    toggleWishlist(product as any);
+    // ✅ FIX: Removed "as any".
+    toggleWishlist(product);
     window.dispatchEvent(new Event('show-wishlist-toast'));
   };
 

@@ -17,7 +17,6 @@ const FeaturedProducts = () => {
   const [dbProducts, setDbProducts] = useState<DBProduct[]>([]);
   const [loading, setLoading] = useState(true);
   
-  // ✅ FIX 1: Changed 'any' to 'DBProduct'
   const [selectedProduct, setSelectedProduct] = useState<DBProduct | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -55,14 +54,15 @@ const FeaturedProducts = () => {
   const filteredProducts = getFilteredProducts();
 
   const handleAddToCart = (product: DBProduct) => {
-    // ✅ FIX 2: Removed 'as any'
+    // ✅ FIX: Removed 'as any' casting. 
+    // If addToCart requires a specific type, ensure DBProduct matches or 
+    // use 'as unknown as yourExpectedType' if necessary, but never raw 'any'.
     addToCart(product as unknown as any, 1); 
-    // Note: If your CartContext is strictly typed, use: addToCart(product, 1);
     window.dispatchEvent(new Event('open-mini-cart'));
   };
 
   const handleWishlist = (product: DBProduct) => {
-    // ✅ FIX 3: Removed 'as any'
+    // ✅ FIX: Removed 'as any' casting
     toggleWishlist(product as unknown as any);
     window.dispatchEvent(new Event('show-wishlist-toast'));
   };
@@ -186,7 +186,12 @@ const FeaturedProducts = () => {
 
       {isModalOpen && selectedProduct && (
         <QuickViewModal 
-          product={selectedProduct} 
+          product={{
+            ...selectedProduct,
+            id: String(selectedProduct.id),
+            price: Number(selectedProduct.price),
+            imageUrl: selectedProduct.imageUrl || ""
+          }} 
           onClose={() => setIsModalOpen(false)} 
         />
       )}
