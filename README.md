@@ -1,51 +1,70 @@
 # 🌸 Flower Shop - Modern Floral Boutique
 
-<<<<<<< HEAD
-A sleek, high-performance landing page for a flower shop, built using **React**, **TypeScript**, and **Firebase**. This project focuses on a component-based architecture and type-safe development.
-=======
-A sleek, high-performance landing page for a flower shop, built using **React**, **TypeScript**, and **Vite**. This project focuses on a component-based architecture and type-safe development.
->>>>>>> 8deb303 (chore: optimize CI/CD pipeline and resolve linting/type errors)
+A sleek, high-performance landing page for a flower shop, built using **React**, **TypeScript**, **Vite**, and **Firebase**. This project focuses on a professional CI/CD pipeline, component-based architecture, and type-safe development.
 
-[**✨ Live Demo**](https://horoneia.github.io/flower-shop/)
+[**✨ Live Demo**](https://flower-shop-44943.web.app/)
 
 ---
 
 ## 📸 Preview
 
-<<<<<<< HEAD
 ![Project Screenshot](https://raw.githubusercontent.com/HoroNeia/flower-shop/src/assets/screenshot.png)
-=======
-![Project Screenshot](https://raw.githubusercontent.com/HoroNeia/flower-shop/main/screenshot.png)
->>>>>>> 8deb303 (chore: optimize CI/CD pipeline and resolve linting/type errors)
-_(Note: Upload a screenshot named 'screenshot.png' to your main folder to see it here!)_
+_(Note: Ensure 'screenshot.png' is in your main folder to see it here!)_
 
 ---
 
-## 🚀 Features
+## 🚀 Web Engineering Features (CI/CD)
 
-- **Component-Driven UI:** Built with reusable React components.
-- **Type Safety:** Developed with TypeScript for robust, error-free code.
-- **Firebase Hosting:** Fast and secure delivery via Google's global CDN.
-- **Responsive Design:** Fully optimized for mobile, tablet, and desktop screens.
-- **Modern Styling:** Elegant layout designed to showcase floral products.
+This project implements a professional **Automated Pipeline** to ensure code quality and seamless deployment:
+
+- **Continuous Integration (CI):** Every push and Pull Request is automatically audited.
+  - **Linting:** Checks for unused variables and code style consistency.
+  - **Type Checking:** Strict TypeScript compilation ensures no data-type errors.
+- **Continuous Deployment (CD):** Validated code is automatically deployed to **Firebase Hosting** only after passing all tests.
+- **Gatekeeping:** If a commit contains errors, the deployment is automatically rejected, protecting the live site from breaking.
+
+---
 
 ## 🛠️ Tech Stack
 
-- **React 18:** For building the user interface.
-- **TypeScript:** For static type checking.
-- **Vite:** (Build Tool.)
-- **Firebase Hosting** (Deployment)
-- **CSS3:** Custom styling for a unique brand identity.
+- **React 18:** For building the interactive user interface.
+- **TypeScript:** For robust, static type checking.
+- **Vite:** High-performance build tooling.
+- **Firebase Hosting:** Global CDN for fast and secure delivery.
+- **GitHub Actions:** Automating the CI/CD pipeline and environment sync.
+- **Tailwind CSS:** Modern, utility-first styling.
+
+---
 
 ## 📂 Getting Started
 
 ### Prerequisites
 
-Make sure you have [Node.js](https://nodejs.org/) installed on your machine.
+- **Node.js:** v22.0.0 or higher (LTS recommended).
+- **npm:** v10.0.0 or higher.
 
 ### Installation
 
-1. Clone the repository:
-   ```bash
-   git clone [https://github.com/HoroNeia/flower-shop.git](https://github.com/HoroNeia/flower-shop.git)
-   ```
+1.  **Clone the repository:**
+
+    ```bash
+    git clone [https://github.com/HoroNeia/flower-shop.git](https://github.com/HoroNeia/flower-shop.git)
+    cd flower-shop
+    ```
+
+2.  **Install dependencies:**
+
+    ```bash
+    npm install
+    ```
+
+3.  **Run Development Server:**
+    ```bash
+    npm run dev
+    ```
+
+---
+
+### 🌸 Environment Note
+
+The project is currently synchronized with **Node.js 22 LTS** across all GitHub Action workflows to ensure a stable and modern deployment environment.
