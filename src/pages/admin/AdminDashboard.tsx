@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react"; // ✅ Added useCallback
 import { 
   Package, 
   Loader2, 
@@ -21,7 +21,7 @@ const AdminDashboard = () => {
     totalRevenue: 0,
     cancelledOrders: 0,
     cancelledRevenue: 0,
-    recentCancellations: [] as any[],
+    recentCancellations: [] as (DocumentData & { id: string })[], // ✅ Fixed 'any'
     topProducts: [] as { name: string, count: number }[],
     inStock: 0,
     outOfStock: 0,
@@ -29,7 +29,8 @@ const AdminDashboard = () => {
     loading: true
   });
 
-  const fetchStats = async () => {
+  // ✅ FIX: Wrapped in useCallback to stabilize the function and satisfy the linter
+  const fetchStats = useCallback(async () => {
     setStats(prev => ({ ...prev, loading: true }));
     try {
       const metaRef = doc(db, "metadata", "collection_names");
@@ -116,9 +117,12 @@ const AdminDashboard = () => {
       console.error(error);
       setStats(prev => ({ ...prev, loading: false }));
     }
-  };
+  }, [filter]); // ✅ Added filter as dependency here
 
-  useEffect(() => { fetchStats(); }, [filter]);
+  // ✅ FIX: Now fetchStats is a stable dependency
+  useEffect(() => { 
+    fetchStats(); 
+  }, [fetchStats]);
 
   if (stats.loading) return (
     <div className="h-screen flex flex-col items-center justify-center gap-4">
@@ -254,7 +258,6 @@ const AdminDashboard = () => {
   );
 };
 
-// Reusable Stat Component
 const StatCard = ({ title, value, color }: { title: string, value: string | number, color: string }) => (
   <div className="bg-white p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 group">
     <p className="text-[9px] md:text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 group-hover:text-pink-400 transition-colors">{title}</p>

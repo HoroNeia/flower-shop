@@ -9,9 +9,21 @@ on:
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
+    # 🌟 FIX: Opt-in to Node 24 for the GitHub runner actions
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - uses: actions/checkout@v4
+
+      # 🌟 IMPROVEMENT: Explicitly set the Node version for your project build
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+
       - run: npm ci && npm run build
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}

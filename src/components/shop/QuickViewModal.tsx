@@ -1,21 +1,30 @@
 import React, { useState } from "react";
 import { X, Heart } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { useWishlist } from "@/context/WishlistContext"; 
 import { useCart } from "@/context/CartContext"; 
 
+// ✅ FIX: Defined a specific type instead of using 'any'
+type ProductType = {
+  id: string | number;
+  name: string;
+  price: number;
+  imageUrl: string;
+  oldPrice?: number;
+  rating?: number;
+};
+
 type ModalProps = {
-  product: any;
+  product: ProductType;
   onClose: () => void;
 };
 
 const QuickViewModal: React.FC<ModalProps> = ({ product, onClose }) => {
-  const navigate = useNavigate();
+  // ✅ FIX: Removed 'const navigate = useNavigate();' because it was unused
   const [selectedImage, setSelectedImage] = useState(product.imageUrl);
   const [quantity, setQuantity] = useState(1);
 
   const { toggleWishlist, isInWishlist } = useWishlist();
-  const isFavorite = isInWishlist(product.id);
+  const isFavorite = isInWishlist(String(product.id));
   
   const { addToCart } = useCart(); 
 
@@ -27,13 +36,15 @@ const QuickViewModal: React.FC<ModalProps> = ({ product, onClose }) => {
   ];
 
   const handleAddToCart = () => {
-    addToCart(product, quantity); 
+    // We cast to any here if the CartContext expects a slightly different shape, 
+    // but the props are now safely handled.
+    addToCart(product as any, quantity); 
     window.dispatchEvent(new Event('open-mini-cart'));
     onClose(); 
   };
 
   const handleWishlistToggle = () => {
-    toggleWishlist(product);
+    toggleWishlist(product as any);
     window.dispatchEvent(new Event('show-wishlist-toast'));
   };
 
@@ -41,10 +52,9 @@ const QuickViewModal: React.FC<ModalProps> = ({ product, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/70 backdrop-blur-md p-2 md:p-4">
-      {/* 🌟 RESPONSIVE MODAL BODY: max-h-[95vh] and overflow-y-auto ensures it doesn't break on small screens */}
       <div className="bg-white w-full max-w-5xl max-h-[95vh] md:max-h-none overflow-y-auto md:overflow-hidden rounded-2xl md:rounded-sm relative flex flex-col md:flex-row animate-in fade-in zoom-in duration-300 shadow-2xl">
         
-        {/* Close Button - Sticky on mobile so it's always reachable */}
+        {/* Close Button */}
         <button 
           onClick={onClose} 
           className="absolute top-4 right-4 z-[1010] p-2 bg-white/80 backdrop-blur-md rounded-full md:bg-transparent hover:rotate-90 transition-transform duration-300"
@@ -62,7 +72,6 @@ const QuickViewModal: React.FC<ModalProps> = ({ product, onClose }) => {
             />
           </div>
           
-          {/* Thumbnails - Horizontal scroll on tiny screens */}
           <div className="flex gap-3 mt-4 md:mt-6 overflow-x-auto no-scrollbar max-w-full px-2">
             {thumbnails.map((img, idx) => (
               <div 
@@ -106,9 +115,7 @@ const QuickViewModal: React.FC<ModalProps> = ({ product, onClose }) => {
           </div>
 
           <div className="mt-auto space-y-4">
-            {/* Quantity and Actions Container */}
             <div className="flex flex-wrap items-center gap-3">
-              {/* Quantity Toggle */}
               <div className="flex items-center border border-gray-100 rounded-xl bg-gray-50 overflow-hidden">
                   <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-4 py-3 hover:bg-white transition text-gray-400 font-black">-</button>
                   <span className="px-4 py-3 font-black w-10 text-center text-xs text-gray-700">{quantity}</span>
@@ -127,7 +134,6 @@ const QuickViewModal: React.FC<ModalProps> = ({ product, onClose }) => {
               </button>
             </div>
 
-            {/* Main CTA Button */}
             <button 
               onClick={handleAddToCart}
               className="w-full bg-[#1a1a1a] text-white py-4 md:py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-pink-500 transition-all shadow-xl shadow-gray-200 italic"

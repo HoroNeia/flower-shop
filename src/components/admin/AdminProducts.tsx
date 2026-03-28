@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react"; // ✅ Added useCallback
 import { 
   Plus, Edit, Trash, X, ChevronLeft, ChevronRight, 
   UploadCloud, Loader2, FolderPlus, FolderMinus, 
@@ -51,11 +51,8 @@ const AdminProducts: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [collectionsList, setCollectionsList] = useState<string[]>([]);
   const [selectedCollection, setSelectedCollection] = useState("");
-  
-  // 🌟 NEW STATE FOR COLLECTION ADDING
   const [newCollectionName, setNewCollectionName] = useState("");
 
-  // 🌟 PAGINATION STATE
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -67,7 +64,8 @@ const AdminProducts: React.FC = () => {
     setTimeout(() => setShowToast(false), 3000);
   };
 
-  const fetchCollectionsMetadata = async () => {
+  // ✅ FIX: Wrapped in useCallback to prevent the "Missing Dependency" warning
+  const fetchCollectionsMetadata = useCallback(async () => {
     try {
       const metaRef = doc(db, "metadata", "collection_names");
       const metaSnap = await getDoc(metaRef);
@@ -82,9 +80,10 @@ const AdminProducts: React.FC = () => {
         setSelectedCollection("flowers");
       }
     } catch (error) { console.error(error); }
-  };
+  }, [selectedCollection]);
 
-  const fetchProducts = async () => {
+  // ✅ FIX: Wrapped in useCallback to stabilize the function
+  const fetchProducts = useCallback(async () => {
     if (!selectedCollection) return;
     try {
       const querySnapshot = await getDocs(collection(db, selectedCollection));
@@ -92,12 +91,21 @@ const AdminProducts: React.FC = () => {
       setProducts(productsData);
       setSelectedProductIds([]);
     } catch (error) { console.error(error); }
-  };
+  }, [selectedCollection]);
 
-  // 🌟 NEW FUNCTION: ADD COLLECTION TO DB
+  // ✅ FIX: Dependency arrays now only contain the stable functions
+  useEffect(() => { 
+    fetchCollectionsMetadata(); 
+  }, [fetchCollectionsMetadata]);
+
+  useEffect(() => { 
+    setCurrentPage(1); 
+    fetchProducts(); 
+  }, [fetchProducts]);
+
   const handleAddCollection = async (e: React.FormEvent) => {
     e.preventDefault();
-    const trimmedName = newCollectionName.trim().toLowerCase().replace(/\s+/g, '_'); // Safe format for Firebase collections
+    const trimmedName = newCollectionName.trim().toLowerCase().replace(/\s+/g, '_');
     
     if (!trimmedName) return;
     if (collectionsList.includes(trimmedName)) {
@@ -107,10 +115,7 @@ const AdminProducts: React.FC = () => {
 
     try {
       const metaRef = doc(db, "metadata", "collection_names");
-      await updateDoc(metaRef, {
-        list: arrayUnion(trimmedName)
-      });
-      
+      await updateDoc(metaRef, { list: arrayUnion(trimmedName) });
       setCollectionsList(prev => [...prev, trimmedName]);
       setSelectedCollection(trimmedName);
       setNewCollectionName("");
@@ -147,9 +152,6 @@ const AdminProducts: React.FC = () => {
     finally { setIsDeleteModalOpen(false); setDeleteTarget(null); }
   };
 
-  useEffect(() => { fetchCollectionsMetadata(); }, []);
-  useEffect(() => { setCurrentPage(1); fetchProducts(); }, [selectedCollection]);
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     const numberFields = ["price", "oldPrice", "stock", "sale", "rating"];
@@ -183,7 +185,6 @@ const AdminProducts: React.FC = () => {
     setSelectedProductIds(prev => prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]);
   };
 
-  // 🌟 PAGINATION & FILTER LOGIC
   const filteredProducts = products.filter((p) => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   const indexOfFirstProduct = (currentPage - 1) * itemsPerPage;
@@ -347,7 +348,7 @@ const AdminProducts: React.FC = () => {
         </div>
       </div>
 
-      {/* TOAST NOTIFICATION (added purely for visual completeness of your triggerToast) */}
+      {/* TOAST NOTIFICATION */}
       <div className={`fixed top-6 right-6 z-[300] transition-all duration-300 ${showToast ? 'translate-x-0 opacity-100' : 'translate-x-20 opacity-0 pointer-events-none'}`}>
          <div className={`px-6 py-4 rounded-xl shadow-lg font-black uppercase text-[10px] tracking-widest border-l-4 ${toastType === 'success' ? 'bg-white text-gray-800 border-pink-500' : 'bg-red-500 text-white border-red-700'}`}>
            {toastMessage}
@@ -420,7 +421,7 @@ const AdminProducts: React.FC = () => {
         </div>
       )}
 
-      {/* 🌟 NEW COLLECTION MODAL (This was missing!) */}
+      {/* NEW COLLECTION MODAL */}
       {isColModalOpen && (
         <div className="fixed inset-0 z-[250] bg-black/60 backdrop-blur-md flex items-center justify-center p-6">
           <div className="bg-white rounded-[2.5rem] p-8 md:p-10 max-w-sm w-full text-center shadow-2xl relative border border-gray-50">

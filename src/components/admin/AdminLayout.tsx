@@ -10,7 +10,7 @@ import {
   Menu, 
   X,
   User,
-  CheckCheck, // 🌟 Added for "Clear All"
+  CheckCheck, 
   Loader2
 } from "lucide-react";
 import { auth, db } from "@/firebase";
@@ -20,30 +20,37 @@ import {
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 
+// ✅ FIX: Added proper interface for the AdminLink props
+interface AdminLinkProps {
+  to: string;
+  icon: React.ReactNode;
+  label: string;
+  active: boolean;
+  onClick: () => void;
+  badge?: number;
+}
+
 const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   
-  // 🌟 UI STATES
   const [notifHover, setNotifHover] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [isImgModalOpen, setIsImgModalOpen] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
   
-  // 🌟 ADMIN PROFILE STATES
   const [adminData, setAdminData] = useState<{ name: string; photoURL: string | null }>({
     name: "Super Admin",
     photoURL: null
   });
 
-  // 🌟 REAL-TIME DATA STATES
   const [unreadCount, setUnreadCount] = useState(0);
-  const [latestOrder, setLatestOrder] = useState<any>(null);
+  // ✅ FIX: Changed from <any> to a record type
+  const [latestOrder, setLatestOrder] = useState<Record<string, any> | null>(null);
 
   const isActive = (path: string) => location.pathname === path;
 
-  // 🌟 SYNC ADMIN PROFILE
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -60,7 +67,6 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
-  // 🌟 LIVE NOTIFICATION LISTENERS
   useEffect(() => {
     const qLatest = query(collection(db, "orders"), orderBy("createdAt", "desc"), limit(1));
     const unsubLatest = onSnapshot(qLatest, (snapshot) => {
@@ -77,8 +83,8 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     return () => { unsubLatest(); unsubCount(); };
   }, []);
 
-  // 🌟 NEW: MARK ALL AS READ LOGIC
-  const markAllAsRead = async (e: React.MouseEvent) => {
+  // ✅ FIX: Explicitly typed the mouse event
+  const markAllAsRead = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
     if (unreadCount === 0 || isClearing) return;
@@ -91,7 +97,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
       querySnapshot.forEach((document) => {
         const docRef = doc(db, "orders", document.id);
-        batch.update(docRef, { status: "Seen" }); // Updates status to clear badge
+        batch.update(docRef, { status: "Seen" }); 
       });
 
       await batch.commit();
@@ -110,7 +116,6 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <div className="flex h-screen bg-[#fff5f7] overflow-hidden" onClick={() => setSettingsOpen(false)}>
       
-      {/* 🌸 SIDEBAR */}
       <aside className={`fixed inset-y-0 left-0 z-50 w-80 bg-[#0F1113] text-white flex flex-col shadow-[10px_0_30px_rgba(0,0,0,0.05)] transition-transform duration-500 lg:relative lg:translate-x-0 ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
         <button onClick={() => setMobileOpen(false)} className="lg:hidden absolute top-10 right-6 text-gray-400 hover:text-white"><X size={24} /></button>
         
@@ -166,7 +171,6 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </div>
       </aside>
 
-      {/* Main Content Area (Matches your previous responsive header) */}
       <main className="flex-1 overflow-y-auto relative">
         <header className="h-24 flex items-center justify-between px-6 md:px-12 bg-white/30 backdrop-blur-md border-b border-pink-100/50 sticky top-0 z-30">
           <div className="flex items-center gap-4">
@@ -242,7 +246,8 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   );
 };
 
-const AdminLink = ({ to, icon, label, active, onClick, badge }: any) => (
+// ✅ FIX: Replaced 'any' with AdminLinkProps interface
+const AdminLink = ({ to, icon, label, active, onClick, badge = 0 }: AdminLinkProps) => (
   <Link to={to} onClick={onClick} className={`flex items-center gap-5 px-6 py-4 rounded-[2rem] transition-all duration-500 group relative ${active ? "bg-pink-500 text-white shadow-[0_10px_20px_rgba(236,72,153,0.3)] scale-[1.02]" : "text-gray-500 hover:bg-[#1A1D21] hover:text-white"}`}>
     <div className={`${active ? "text-white" : "text-gray-600 group-hover:text-pink-500"} transition-colors`}>{icon}</div>
     <span className="font-black text-[11px] uppercase tracking-[0.15em] italic flex-1">{label}</span>

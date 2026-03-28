@@ -1,6 +1,10 @@
 # 🌸 Flower Shop - Modern Floral Boutique
 
+<<<<<<< HEAD
 A sleek, high-performance landing page for a flower shop, built using **React**, **TypeScript**, and **Firebase**. This project focuses on a component-based architecture and type-safe development.
+=======
+A sleek, high-performance landing page for a flower shop, built using **React**, **TypeScript**, and **Vite**. This project focuses on a component-based architecture and type-safe development.
+>>>>>>> 8deb303 (chore: optimize CI/CD pipeline and resolve linting/type errors)
 
 [**✨ Live Demo**](https://horoneia.github.io/flower-shop/)
 
@@ -8,7 +12,11 @@ A sleek, high-performance landing page for a flower shop, built using **React**,
 
 ## 📸 Preview
 
+<<<<<<< HEAD
 ![Project Screenshot](https://raw.githubusercontent.com/HoroNeia/flower-shop/src/assets/screenshot.png)
+=======
+![Project Screenshot](https://raw.githubusercontent.com/HoroNeia/flower-shop/main/screenshot.png)
+>>>>>>> 8deb303 (chore: optimize CI/CD pipeline and resolve linting/type errors)
 _(Note: Upload a screenshot named 'screenshot.png' to your main folder to see it here!)_
 
 ---
