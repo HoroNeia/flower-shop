@@ -1,73 +1,43 @@
-# React + TypeScript + Vite
+# 🌸 Flower Shop - Modern Floral Boutique
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A sleek, high-performance landing page for a flower shop, built using **React**, **TypeScript**, and **Firebase**. This project focuses on a component-based architecture and type-safe development.
 
-Currently, two official plugins are available:
+[**✨ Live Demo**](https://horoneia.github.io/flower-shop/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## 📸 Preview
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+![Project Screenshot](https://raw.githubusercontent.com/HoroNeia/flower-shop/main/screenshot.png)
+_(Note: Upload a screenshot named 'screenshot.png' to your main folder to see it here!)_
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🚀 Features
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- **Component-Driven UI:** Built with reusable React components.
+- **Type Safety:** Developed with TypeScript for robust, error-free code.
+- **Firebase Hosting:** Fast and secure delivery via Google's global CDN.
+- **Responsive Design:** Fully optimized for mobile, tablet, and desktop screens.
+- **Modern Styling:** Elegant layout designed to showcase floral products.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 🛠️ Tech Stack
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- **React 18:** For building the user interface.
+- **TypeScript:** For static type checking.
+- **Vite:** (Build Tool.)
+- **Firebase Hosting** (Deployment)
+- **CSS3:** Custom styling for a unique brand identity.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 📂 Getting Started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Prerequisites
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Make sure you have [Node.js](https://nodejs.org/) installed on your machine.
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone [https://github.com/HoroNeia/flower-shop.git](https://github.com/HoroNeia/flower-shop.git)
+   ```
