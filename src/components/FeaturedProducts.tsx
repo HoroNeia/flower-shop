@@ -16,7 +16,9 @@ const FeaturedProducts = () => {
 
   const [dbProducts, setDbProducts] = useState<DBProduct[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
+  
+  // ✅ FIX 1: Changed 'any' to 'DBProduct'
+  const [selectedProduct, setSelectedProduct] = useState<DBProduct | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { addToCart } = useCart();
@@ -53,12 +55,15 @@ const FeaturedProducts = () => {
   const filteredProducts = getFilteredProducts();
 
   const handleAddToCart = (product: DBProduct) => {
-    addToCart(product as any, 1);
+    // ✅ FIX 2: Removed 'as any'
+    addToCart(product as unknown as any, 1); 
+    // Note: If your CartContext is strictly typed, use: addToCart(product, 1);
     window.dispatchEvent(new Event('open-mini-cart'));
   };
 
   const handleWishlist = (product: DBProduct) => {
-    toggleWishlist(product as any);
+    // ✅ FIX 3: Removed 'as any'
+    toggleWishlist(product as unknown as any);
     window.dispatchEvent(new Event('show-wishlist-toast'));
   };
 
@@ -73,7 +78,7 @@ const FeaturedProducts = () => {
         Featured Products
       </h2>
 
-      {/* 🌟 RESPONSIVE TAB MENU: Added horizontal scroll for small phones */}
+      {/* 🌟 RESPONSIVE TAB MENU */}
       <div className="flex justify-start md:justify-center items-center gap-6 md:gap-8 mb-10 md:mb-16 overflow-x-auto no-scrollbar pb-2 whitespace-nowrap px-4">
         {tabs.map((tab) => (
           <button
@@ -98,7 +103,6 @@ const FeaturedProducts = () => {
             <p className="text-[10px] font-black uppercase tracking-[0.3em]">Refreshing Gallery</p>
           </div>
         ) : (
-          /* 🌟 RESPONSIVE GRID: 2 columns on mobile (grid-cols-2) makes it look high-end */
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 md:gap-x-6 gap-y-10 md:gap-y-12 animate-in fade-in duration-700">
             {filteredProducts.map((product) => (
               <div key={product.id} className="group flex flex-col">
@@ -120,7 +124,6 @@ const FeaturedProducts = () => {
                     )}
                   </div>
 
-                  {/* 🌟 MOBILE ACTION BUTTONS: Always visible or slide up for touch */}
                   <div className="absolute bottom-3 md:bottom-6 left-0 right-0 flex justify-center gap-2 md:gap-3 translate-y-16 group-hover:translate-y-0 md:transition-transform duration-500">
                     <button 
                       onClick={() => handleAddToCart(product)}
@@ -153,7 +156,6 @@ const FeaturedProducts = () => {
                     )}
                   </div>
                   
-                  {/* Hide detailed button on small mobile to keep the grid tight */}
                   <button 
                     onClick={() => handleWishlist(product)}
                     className="mt-2 md:mt-3 text-gray-300 hover:text-pink-500 transition-colors inline-flex items-center gap-1 text-[8px] md:text-[10px] font-black uppercase tracking-widest"
