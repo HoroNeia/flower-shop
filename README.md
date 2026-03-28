@@ -8,7 +8,7 @@ A sleek, high-performance landing page for a flower shop, built using **React**,
 
 ## 📸 Preview
 
-![Project Screenshot](https://raw.githubusercontent.com/HoroNeia/flower-shop/main/screenshot.png)
+![Project Screenshot](https://raw.githubusercontent.com/HoroNeia/flower-shop/src/assets/screenshot.png)
 _(Note: Upload a screenshot named 'screenshot.png' to your main folder to see it here!)_
 
 ---
