@@ -27,10 +27,10 @@ type MenuItem = {
 };
 
 const menuItems: MenuItem[] = [
-  { name: "Daily Deals", path: "/home-new" },
-  { name: "Shop", path: "/shop" },
-  { name: "About", path: "/about" },
-  { name: "Contact Us", path: "/contact" },
+  { name: "Ako", path: "/home-new" },
+  { name: "ay", path: "/shop" },
+  { name: "magtesting", path: "/about" },
+  { name: "ulit", path: "/contact" },
 ];
 
 const Navbar = () => {
