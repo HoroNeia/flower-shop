@@ -28,8 +28,9 @@ const RegisterPage = () => {
         await updateProfile(auth.currentUser, { displayName: name });
       }
       navigate("/login");
-    } catch (err: any) {
-      setError(err.message.includes("email-already-in-use") 
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message.includes("email-already-in-use") 
         ? "This email is already blooming elsewhere." 
         : "Registration failed. Please try again.");
     } finally {

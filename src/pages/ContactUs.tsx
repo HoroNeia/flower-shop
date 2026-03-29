@@ -7,9 +7,7 @@ import {
   MapPin, 
   Mail,
   Facebook, 
-  Twitter, 
   Instagram, 
-  Youtube,
   Send,
   Loader2,
   CheckCircle2

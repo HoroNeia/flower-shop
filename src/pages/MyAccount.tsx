@@ -15,7 +15,6 @@ import { onAuthStateChanged, signOut, updateEmail, updatePassword, updateProfile
 import { doc, setDoc, getDoc } from "firebase/firestore";
 
 const MyAccount = () => {
-  const [user, setUser] = useState<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   // --- UI STATES ---
@@ -60,7 +59,6 @@ const MyAccount = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        setUser(currentUser);
         setEmail(currentUser.email || "");
         setPhotoURL(currentUser.photoURL);
 
@@ -77,7 +75,7 @@ const MyAccount = () => {
           setZip(data.zip || "");
         }
       } else {
-        setUser(null);
+        setPhotoURL(null);
       }
     });
     return () => unsubscribe();
@@ -108,9 +106,10 @@ const MyAccount = () => {
         setSuccess("Profile picture updated!");
         triggerToast("Profile picture updated!", "success"); // 🌟 Added Toast
       }
-    } catch (err: any) {
-      setError("Failed to upload image.");
-      triggerToast("Failed to upload image.", "error"); // 🌟 Added Toast
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message || "Failed to upload image.");
+      triggerToast("Failed to upload image.", "error");
     } finally {
       setUploading(false);
     }
@@ -131,9 +130,10 @@ const MyAccount = () => {
         setSuccess("Account information updated!");
         triggerToast("Account information updated!", "success"); // 🌟 Added Toast
       }
-    } catch (err: any) { 
-      setError(err.message); 
-      triggerToast(err.message, "error"); // 🌟 Added Toast
+    } catch (err) { 
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message); 
+      triggerToast(message, "error");
     }
   };
 
@@ -151,9 +151,10 @@ const MyAccount = () => {
         triggerToast("Password updated successfully!", "success"); // 🌟 Added Toast
         setPassword(""); setConfirmPassword("");
       }
-    } catch (err: any) { 
-      setError(err.message); 
-      triggerToast(err.message, "error"); // 🌟 Added Toast
+    } catch (err) { 
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message); 
+      triggerToast(message, "error");
     }
   };
 
@@ -181,6 +182,16 @@ const MyAccount = () => {
     <div className="min-h-screen flex flex-col bg-[#fcfcfc] font-sans relative overflow-x-hidden">
       <Navbar />
       <PageHeader title="MY ACCOUNT" />
+      {error && (
+        <div className="mx-auto mb-6 w-full max-w-3xl rounded-3xl border border-red-100 bg-red-50 px-6 py-4 text-sm font-black uppercase tracking-[0.3em] text-red-700">
+          {error}
+        </div>
+      )}
+      {success && (
+        <div className="mx-auto mb-6 w-full max-w-3xl rounded-3xl border border-emerald-100 bg-emerald-50 px-6 py-4 text-sm font-black uppercase tracking-[0.3em] text-emerald-700">
+          {success}
+        </div>
+      )}
       
       {/* 🌟 GLOBAL TOAST NOTIFICATION CONTAINER */}
       <div className={`fixed top-24 right-6 z-[300] transition-all duration-300 ${showToast ? 'translate-x-0 opacity-100' : 'translate-x-20 opacity-0 pointer-events-none'}`}>

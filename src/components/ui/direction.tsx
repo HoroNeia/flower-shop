@@ -12,14 +12,13 @@ function DirectionProvider({
   direction,
   children,
 }: DirectionProviderProps) {
-  // ✅ FIX: Use a fallback and 'as any' to satisfy the strict Radix internal type
+  const finalDir: "ltr" | "rtl" = direction ?? dir ?? "ltr";
+
   return (
-    <DirectionPrimitive.Provider dir={(direction ?? dir ?? "ltr") as any}>
+    <DirectionPrimitive.Provider dir={finalDir}>
       {children}
     </DirectionPrimitive.Provider>
   )
 }
 
-const useDirection = DirectionPrimitive.useDirection
-
-export { DirectionProvider, useDirection }
+export { DirectionProvider }

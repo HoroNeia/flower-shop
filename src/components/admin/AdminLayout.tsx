@@ -29,7 +29,7 @@ interface Order {
     firstName?: string;
     lastName?: string;
   };
-  createdAt: any; // Firestore Timestamp
+  createdAt: { toDate: () => Date } | Date;
 }
 
 interface AdminLinkProps {

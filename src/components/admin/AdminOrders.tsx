@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { 
   ShoppingBag, X, MapPin, 
   Calendar, Trash2, BellRing, 
@@ -41,7 +41,6 @@ interface Order {
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [filteredOrders, setFilteredOrders] = useState<Order[]>([]); 
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all"); 
   const [pendingCount, setPendingCount] = useState(0); 
@@ -72,22 +71,20 @@ const AdminOrders = () => {
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
+  const filteredOrders = useMemo(() => {
     if (filter === "all") {
-      setFilteredOrders(orders);
-    } else {
-      const now = new Date();
-      const startDate = new Date();
-      if (filter === "last-day") startDate.setDate(now.getDate() - 1);
-      else if (filter === "last-week") startDate.setDate(now.getDate() - 7);
-      else if (filter === "last-month") startDate.setMonth(now.getMonth() - 1);
-
-      const filtered = orders.filter(order => {
-        const orderDate = order.createdAt?.toDate() || new Date();
-        return orderDate >= startDate;
-      });
-      setFilteredOrders(filtered);
+      return orders;
     }
+    const now = new Date();
+    const startDate = new Date();
+    if (filter === "last-day") startDate.setDate(now.getDate() - 1);
+    else if (filter === "last-week") startDate.setDate(now.getDate() - 7);
+    else if (filter === "last-month") startDate.setMonth(now.getMonth() - 1);
+
+    return orders.filter(order => {
+      const orderDate = order.createdAt?.toDate() || new Date();
+      return orderDate >= startDate;
+    });
   }, [filter, orders]);
 
   const updateStatus = async (orderId: string, newStatus: string) => {

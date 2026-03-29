@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { X, Heart } from "lucide-react";
-import { useWishlist } from "@/context/WishlistContext"; 
-import { useCart } from "@/context/CartContext"; 
+import { useWishlist } from "@/context/useWishlist";
+import { useCart } from "@/context/useCart";
 
 // ✅ FIX: Added missing properties to match the global Product interface
 // This removes the need for "as any" which causes GitHub build errors.

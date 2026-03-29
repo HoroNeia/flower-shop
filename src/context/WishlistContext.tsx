@@ -1,15 +1,6 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, { useState, useEffect, ReactNode } from "react";
 import { Product } from "../types/product";
-
-interface WishlistContextType {
-  wishlist: Product[];
-  toggleWishlist: (product: Product) => void;
-  isInWishlist: (productId: string | number) => boolean;
-  wishlistCount: number;
-  clearWishlist: () => void;
-}
-
-const WishlistContext = createContext<WishlistContextType | undefined>(undefined);
+import { WishlistContext } from "./useWishlist";
 
 export const WishlistProvider = ({ children }: { children: ReactNode }) => {
   // 🌟 LOGIC PRESERVATION + PERSISTENCE: Initialize from LocalStorage
@@ -63,8 +54,4 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const useWishlist = () => {
-  const context = useContext(WishlistContext);
-  if (!context) throw new Error("useWishlist must be used within a WishlistProvider");
-  return context;
-};
+
