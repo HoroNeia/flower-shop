@@ -1,37 +1,17 @@
 import React from "react";
 import { Heart, ShoppingCart, Star } from "lucide-react"; 
 import { useNavigate } from "react-router-dom";
-import { useWishlist } from "@/context/WishlistContext";
-import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/useWishlist";
+import { useCart } from "@/context/useCart";
+import { Product } from "@/types/product";
 
-// ✅ FIX: Define the internal Product type to satisfy Context requirements
-interface Product {
-  id: string;
-  name: string;
-  imageUrl: string;
-  price: number;
-  oldPrice?: number;
-  rating?: number;
-  sale?: number;
-  category?: string;
-  color?: string;
-  size?: string;
-}
-
-type ProductCardListProps = {
-  id: string | number;
-  name: string;
-  imageUrl?: string;
+type ProductCardListProps = Product & {
   image?: string;
-  price: number;
-  oldPrice?: number;
-  rating?: number;
   description?: string;
-  sale?: number;
 };
 
 const ProductCardList: React.FC<ProductCardListProps> = (props) => {
-  const { id, name = "Unnamed Product", imageUrl, image, price = 0, oldPrice, rating = 5, description = "", sale } = props;
+  const { id, name = "Unnamed Product", imageUrl, image, price = 0, oldPrice, rating = 5, description = "", sale, category = "Uncategorized", color = "Default", size = "One Size" } = props;
   const displayImage = imageUrl || image || "https://via.placeholder.com/300";
   
   const navigate = useNavigate();
@@ -41,22 +21,22 @@ const ProductCardList: React.FC<ProductCardListProps> = (props) => {
   const isFavorite = isInWishlist(String(id));
   const productInCart = isInCart(String(id));
 
-  // ✅ FIX: Create a type-safe object using the Interface above
-  const productData: Product = { 
-    id: String(id), 
-    name, 
-    imageUrl: displayImage, 
-    price, 
-    oldPrice, 
-    rating, 
-    sale 
+  const productData: Product = {
+    id: String(id),
+    name,
+    imageUrl: displayImage,
+    price,
+    oldPrice,
+    rating,
+    sale,
+    category,
+    color,
+    size,
   };
 
   const handleWishlistClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // ✅ FIX: Pass the typed object directly (no 'as any')
-    toggleWishlist(productData as unknown as any); 
-    // If your Context is updated, you can just do: toggleWishlist(productData);
+    toggleWishlist(productData);
     window.dispatchEvent(new Event('show-wishlist-toast'));
   };
 
@@ -65,8 +45,7 @@ const ProductCardList: React.FC<ProductCardListProps> = (props) => {
     if (productInCart) {
       updateQuantity(String(id), productInCart.quantity + 1);
     } else {
-      // ✅ FIX: Removed 'as any'
-      addToCart(productData as unknown as any, 1);
+      addToCart(productData, 1);
     }
   };
 

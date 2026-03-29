@@ -1,5 +1,5 @@
 import React from "react";
-import { useWishlist } from "@/context/WishlistContext";
+import { useWishlist } from "@/context/useWishlist";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PageHeader from "@/components/common/PageHeader";

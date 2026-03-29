@@ -1,26 +1,17 @@
 import React, { useState } from "react";
 import { Heart, Eye } from "lucide-react"; 
 import { useNavigate } from "react-router-dom";
-import { useWishlist } from "@/context/WishlistContext";
+import { useWishlist } from "@/context/useWishlist";
 import QuickViewModal from "@/components/shop/QuickViewModal";
+import { Product } from "@/types/product";
 
-// ✅ FIX: Added missing properties to match the new strict QuickViewModal types
-type ProductCardProps = {
+type ProductCardProps = Omit<Product, "gallery" | "description" | "stock" | "databaseCollection"> & {
   id: string | number;
-  name: string;
-  category: string; // 🌟 Added
-  color: string;    // 🌟 Added
-  size: string;     // 🌟 Added
-  imageUrl?: string;
   image?: string;
-  price: number;
-  oldPrice?: number;
-  rating?: number;
-  sale?: number;
 };
 
 const ProductCard: React.FC<ProductCardProps> = (props) => {
-  const { id, name, imageUrl, image, price, oldPrice, rating = 5, sale } = props;
+  const { id, name, imageUrl, image, price, oldPrice, rating = 5, sale, category = "Uncategorized", color = "Default", size = "One Size" } = props;
   const displayImage = imageUrl || image || "https://via.placeholder.com/300";
   
   const navigate = useNavigate();
@@ -35,13 +26,19 @@ const ProductCard: React.FC<ProductCardProps> = (props) => {
 
   const handleWishlistClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // ✅ FIX: Using safe casting to satisfy context
-    const wishlistProduct = { 
-      ...props,
-      id: String(id), 
-      imageUrl: displayImage, 
+    const wishlistProduct: Product = {
+      id: String(id),
+      name,
+      imageUrl: displayImage,
+      price,
+      oldPrice,
+      rating,
+      sale,
+      category,
+      color,
+      size,
     };
-    toggleWishlist(wishlistProduct as any);
+    toggleWishlist(wishlistProduct);
     window.dispatchEvent(new Event('show-wishlist-toast'));
   };
 

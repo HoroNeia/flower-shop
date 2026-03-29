@@ -34,7 +34,7 @@ const LoginPage = () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       navigate("/"); 
-    } catch (err: any) {
+    } catch {
       setError("Invalid credentials. Please verify your bloom account.");
     }
   };
@@ -45,7 +45,7 @@ const LoginPage = () => {
     try {
       await signInWithPopup(auth, provider);
       navigate("/");
-    } catch (err: any) {
+    } catch {
       setError("Google authentication failed.");
     }
   };
@@ -67,7 +67,7 @@ const LoginPage = () => {
         setResetMessage("");
         setResetEmail("");
       }, 4000);
-    } catch (err: any) {
+    } catch {
       setResetError("Failed to send recovery email. Please ensure the email is registered.");
     } finally {
       setIsResetting(false);

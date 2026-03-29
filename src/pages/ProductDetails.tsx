@@ -10,7 +10,7 @@ import { Facebook, Twitter, Instagram, Minus, Plus, Share2, Loader2, ChevronRigh
 // Services and Context
 import { getProductById, getProducts } from "@/services/productService";
 import { Product } from "@/types/product";
-import { useCart } from "@/context/CartContext";
+import { useCart } from "@/context/useCart";
 
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();

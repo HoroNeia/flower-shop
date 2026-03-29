@@ -73,7 +73,17 @@ const Collections = () => {
   );
 };
 
-const CollectionSection = ({ title, subtitle, icon, products, tagColor, onViewAll, navigate }: any) => {
+interface CollectionSectionProps {
+  title: string;
+  subtitle: string;
+  icon: React.ReactNode;
+  products: Product[];
+  tagColor: string;
+  onViewAll: () => void;
+  navigate: ReturnType<typeof useNavigate>;
+}
+
+const CollectionSection = ({ title, subtitle, icon, products, tagColor, onViewAll, navigate }: CollectionSectionProps) => {
   if (products.length === 0) return null;
 
   const visibleProducts = products.slice(0, 12); 

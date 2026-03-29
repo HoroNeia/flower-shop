@@ -13,6 +13,18 @@ import {
 import { collection, getDocs, doc, getDoc, QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
 import { db } from "@/firebase";
 
+interface OrderItemData {
+  name?: string;
+  quantity?: number;
+}
+
+interface DashboardOrder extends DocumentData {
+  id: string;
+  createdAt?: { toDate?: () => Date } | Date;
+  customerInfo?: { firstName?: string; lastName?: string };
+  totalAmount?: number;
+}
+
 const AdminDashboard = () => {
   const [filter, setFilter] = useState("last-month");
   const [stats, setStats] = useState({
@@ -21,7 +33,7 @@ const AdminDashboard = () => {
     totalRevenue: 0,
     cancelledOrders: 0,
     cancelledRevenue: 0,
-    recentCancellations: [] as (DocumentData & { id: string })[], // ✅ Fixed 'any'
+    recentCancellations: [] as DashboardOrder[],
     topProducts: [] as { name: string, count: number }[],
     inStock: 0,
     outOfStock: 0,
@@ -43,7 +55,7 @@ const AdminDashboard = () => {
       let productCount = 0;
       let inStockCount = 0;
       let outOfStockCount = 0;
-      let lowStockList: string[] = [];
+      const lowStockList: string[] = [];
 
       productSnapshots.forEach((colSnap) => {
         productCount += colSnap.size;
@@ -60,7 +72,7 @@ const AdminDashboard = () => {
       });
 
       const now = new Date();
-      let startDate = new Date();
+      const startDate = new Date();
       if (filter === "last-day") startDate.setDate(now.getDate() - 1);
       else if (filter === "last-week") startDate.setDate(now.getDate() - 7);
       else if (filter === "last-month") startDate.setMonth(now.getMonth() - 1);
@@ -71,7 +83,7 @@ const AdminDashboard = () => {
       let orderCount = 0;
       let cancelledCount = 0;
       let lostRevenue = 0;
-      let cancelledList: any[] = [];
+      const cancelledList: DashboardOrder[] = [];
       const productSalesMap: { [key: string]: number } = {};
 
       ordersSnap.forEach((doc: QueryDocumentSnapshot<DocumentData>) => {
@@ -87,8 +99,10 @@ const AdminDashboard = () => {
           } else {
             revenue += Number(data.totalAmount || 0);
             if (data.items && Array.isArray(data.items)) {
-              data.items.forEach((item: any) => {
-                productSalesMap[item.name] = (productSalesMap[item.name] || 0) + (item.quantity || 1);
+              data.items.forEach((item: OrderItemData) => {
+                if (item?.name) {
+                  productSalesMap[item.name] = (productSalesMap[item.name] || 0) + (item.quantity || 1);
+                }
               });
             }
           }
@@ -100,13 +114,22 @@ const AdminDashboard = () => {
         .sort((a, b) => b.count - a.count)
         .slice(0, 5);
 
+      const parseOrderDate = (value: DashboardOrder["createdAt"]) =>
+        value && "toDate" in value && typeof value.toDate === "function"
+          ? value.toDate()
+          : value instanceof Date
+          ? value
+          : new Date(0);
+
       setStats({
         totalProducts: productCount,
         totalOrders: orderCount,
         totalRevenue: revenue,
         cancelledOrders: cancelledCount,
         cancelledRevenue: lostRevenue,
-        recentCancellations: cancelledList.sort((a, b) => b.createdAt - a.createdAt).slice(0, 5),
+        recentCancellations: cancelledList
+          .sort((a, b) => parseOrderDate(b.createdAt).getTime() - parseOrderDate(a.createdAt).getTime())
+          .slice(0, 5),
         topProducts: sortedTopProducts,
         inStock: inStockCount,
         outOfStock: outOfStockCount,
@@ -198,7 +221,7 @@ const AdminDashboard = () => {
           </h3>
           <div className="space-y-3 relative z-10">
             {stats.recentCancellations.length > 0 ? (
-              stats.recentCancellations.map((order: any) => (
+              stats.recentCancellations.map((order) => (
                 <div key={order.id} className="group flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 md:p-5 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-all gap-3 sm:gap-0">
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center text-red-500 font-black text-xs uppercase shrink-0">

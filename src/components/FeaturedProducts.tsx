@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { HeartIcon, ShoppingCartIcon, EyeIcon } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom"; 
-import { useCart } from "@/context/CartContext"; 
-import { useWishlist } from "@/context/WishlistContext"; 
+import { useCart } from "@/context/useCart";
+import { useWishlist } from "@/context/useWishlist";
 import QuickViewModal from "@/components/shop/QuickViewModal";
 import { Loader2 } from "lucide-react"; 
 
@@ -54,16 +54,12 @@ const FeaturedProducts = () => {
   const filteredProducts = getFilteredProducts();
 
   const handleAddToCart = (product: DBProduct) => {
-    // ✅ FIX: Removed 'as any' casting. 
-    // If addToCart requires a specific type, ensure DBProduct matches or 
-    // use 'as unknown as yourExpectedType' if necessary, but never raw 'any'.
-    addToCart(product as unknown as any, 1); 
+    addToCart(product, 1);
     window.dispatchEvent(new Event('open-mini-cart'));
   };
 
   const handleWishlist = (product: DBProduct) => {
-    // ✅ FIX: Removed 'as any' casting
-    toggleWishlist(product as unknown as any);
+    toggleWishlist(product);
     window.dispatchEvent(new Event('show-wishlist-toast'));
   };
 

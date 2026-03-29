@@ -15,8 +15,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 
-import { useCart } from "@/context/CartContext";
-import { useWishlist } from "@/context/WishlistContext";
+import { useCart } from "@/context/useCart";
+import { useWishlist } from "@/context/useWishlist";
 
 
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";

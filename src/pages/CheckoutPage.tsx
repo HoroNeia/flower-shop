@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Check, ShoppingBag, Loader2, ArrowLeft } from "lucide-react";
 
 // Firebase & Context
-import { useCart } from "@/context/CartContext";
+import { useCart } from "@/context/useCart";
 import { auth, db } from "@/firebase"; 
 import { doc, getDoc, collection, addDoc, serverTimestamp } from "firebase/firestore";
 
