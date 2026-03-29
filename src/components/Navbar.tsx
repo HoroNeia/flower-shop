@@ -9,7 +9,7 @@ import {
   XMarkIcon,  
 } from "@heroicons/react/24/outline";
 import { Heart, CheckCircle2 } from "lucide-react"; 
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from let x=1000;
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
